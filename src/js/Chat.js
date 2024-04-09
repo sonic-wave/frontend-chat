@@ -12,13 +12,12 @@ export default class Chat {
 
   init() {
     createModal(this.container);
-    // createChat(this.container);
-    this.registerEvents();
+    this.registration();
   }
 
   bindToDOM() { }
 
-  registerEvents() {
+  registration() {
     // Login
     const modalForm = document.querySelector('.modal__footer');
     const modalInput = document.querySelector('.form__input');
@@ -26,29 +25,22 @@ export default class Chat {
 
     modalForm.addEventListener('submit', (e) => {
       e.preventDefault();
+
       createRequest({ name: modalInput.value })
         .then(data => {
-          this.currentUserInfo = data;
+          if (data.status === 'ok') {
+            this.currentUserName = modalInput.value;
+            modalContent.classList.add('hidden');
+            createChat(this.container);
+            this.ws();
+          }
+          if (data.status === 'error') {
+            alert(data.message);
+            modalInput.value = '';
+          }
         })
-      this.currentUserName = modalInput.value;
-      modalContent.classList.add('hidden');
-      createChat(this.container);
-      this.ws();
     })
 
-  }
-
-  sendMessage() {
-    const chatMessageInput = document.querySelector('.chat__messages-input');
-    const chatMessageContainer = document.querySelector('.chat__messages-container');
-    chatMessageInput.addEventListener('keyup', (e) => {
-      if (e.keyCode === 13) {
-        console.log(e.target.value);
-        const p = document.createElement('p');
-        p.textContent = e.target.value;
-        chatMessageContainer.append(p)
-      }
-    })
   }
 
   ws() {
@@ -56,13 +48,6 @@ export default class Chat {
     const chatMessageContainer = document.querySelector('.chat__messages-container');
     const chatMessageInput = document.querySelector('.chat__messages-input');
     const chatUserList = document.querySelector('.chat__userlist');
-    const closeBtn = document.querySelector('.closeBtn');
-
-    let users = [];
-
-    closeBtn.addEventListener('click', () => {
-      ws.close();
-    })
 
     chatMessageInput.addEventListener('keyup', (e) => {
       if (e.keyCode === 13) {
@@ -83,37 +68,25 @@ export default class Chat {
 
     ws.addEventListener('open', (e) => {
       console.log(e);
-      console.log('ws open')
+      console.log('ws open');
 
-      const div = document.createElement('div');
-      div.textContent = 'You';
-      chatUserList.append(div);
-      console.log(users);
-      console.log('trash')
-      users.forEach((name) => {
-        const div = document.createElement('div');
-        div.textContent = name;
-        chatUserList.append(div);
-      })
     })
 
     ws.addEventListener('close', (e) => {
       console.log(e);
 
-      const message = {
-        type: 'exit',
-        user: {
-          name: 'Sobaka'
-        }
-      };
-
-
-      if (!message) return;
-
-      ws.send(JSON.stringify(message));
-
       console.log('ws close')
     })
+
+    window.addEventListener('beforeunload', () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        const exitMessage = JSON.stringify({
+          type: 'exit',
+          user: { name: this.currentUserName }
+        });
+        ws.send(exitMessage);
+      }
+    });
 
     ws.addEventListener('error', (e) => {
       console.log(e);
@@ -125,51 +98,44 @@ export default class Chat {
 
       const data = JSON.parse(e.data);
 
-      if (data.message) {
+      console.log(data);
+
+      if (data.type !== 'send') {
+        chatUserList.innerHTML = '';
+
+        data.forEach(user => {
+          const userName = document.createElement('div');
+          if (this.currentUserName === user.name) {
+            userName.textContent = 'You';
+            userName.classList.add('yourMessageName');
+
+          } else {
+            userName.textContent = user.name;
+            userName.classList.add('messageName');
+          }
+          chatUserList.append(userName);
+        })
+      }
+
+      if (data.type === 'send') {
         const messageContainer = document.createElement('div');
         messageContainer.className = 'messageContainer';
         const message = document.createElement('div');
         const name = document.createElement('div');
         message.textContent = data.message;
-        if (this.currentUserInfo.user.name === data.name) {
+        if (this.currentUserName === data.name) {
           name.textContent = 'You';
+          name.classList.add('yourMessageName');
           messageContainer.classList.add('yourMessageContainer');
           message.className = 'yourMessage';
         } else {
           name.textContent = data.name;
+          name.classList.add('messageName');
         }
         messageContainer.append(name);
         messageContainer.append(message);
         chatMessageContainer.append(messageContainer);
       }
-
-      // if (Array.isArray(data)) {
-      //   data.forEach((el) => {
-      //       const div = document.createElement('div');
-      //       div.textContent = el.name;
-      //       chatUserList.append(div);
-      //   })
-      // }
-      if (!users.includes(this.currentUserName)) {
-        users.push(this.currentUserName);
-      }
-
-      if (data.length > 0) {
-        let lastName = data[data.length - 1].name;
-        console.log(lastName);
-        console.log('lastname');
-        users.push(lastName);
-        if (lastName !== this.currentUserName) {
-          const div = document.createElement('div');
-          div.textContent = lastName;
-          chatUserList.append(div);
-        }
-      }
-      // users.forEach((el) => {
-      //     const div = document.createElement('div');
-      //     div.textContent = el;
-      //     chatUserList.append(div);
-      // })
 
       console.log('ws message');
 

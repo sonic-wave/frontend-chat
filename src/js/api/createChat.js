@@ -25,11 +25,6 @@ export default function createChat(container) {
     chatArea.append(chatMessageInput);
     chatContainer.append(chatUserList);
     chatContainer.append(chatArea);
-
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = 'Выйти из чата';
-    closeBtn.className = 'closeBtn';
     
     container.append(chatContainer);
-    container.append(closeBtn);
 }

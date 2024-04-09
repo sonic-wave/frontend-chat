@@ -59,14 +59,14 @@ h1 {
   border-radius: 8px;
   display: flex;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-
+  background-color: #fff;
 }
 
 .chat__area {
   flex: 0 0 70%;
   display: flex;
   flex-direction: column;
-
+  box-sizing: border-box;
 }
 
 .chat__messages-container {
@@ -96,7 +96,7 @@ h1 {
 
 .chat__userlist {
   flex: 0 0 30%;
-  background-color: #edefec;
+  background-color: #fff;
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
   box-sizing: border-box;
@@ -104,6 +104,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   padding-top: 15px;
+  border-right: 1px solid rgb(226, 229, 233);
 }
 
 .chat__user {
@@ -145,18 +146,35 @@ h1 {
   display: flex;
   flex-direction: column;
   margin-bottom: 5px;
-  max-height: 300px;
   overflow-y: auto;
-  max-width: 500px; 
   word-wrap: break-word;
+  flex-wrap: wrap;
+  width:auto;
+  box-sizing: border-box;
+  max-width: 100%;
+  flex: 0 1 auto; 
 }
 
 .yourMessageContainer {
   align-items: flex-end;
+  width:auto;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.yourMessageName {
+  color: cornflowerblue;
+}
+
+.messageName {
+  color: coral;
 }
 
 .yourMessage {
+  flex-wrap: wrap;
   box-sizing: border-box;
   word-wrap: break-word;
   text-align: right;
+  width:auto;
+  max-width: 100%;
 }
