@@ -44,7 +44,7 @@ export default class Chat {
   }
 
   ws() {
-    const ws = new WebSocket('wss://https://backend-chat-gov0.onrender.com/ws');
+    const ws = new WebSocket('wss://backend-chat-gov0.onrender.com/ws');
     const chatMessageContainer = document.querySelector('.chat__messages-container');
     const chatMessageInput = document.querySelector('.chat__messages-input');
     const chatUserList = document.querySelector('.chat__userlist');
