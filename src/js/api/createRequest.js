@@ -6,7 +6,7 @@ const createRequest = async (options) => {
             'Content-Type': 'application/json',
         },
     }
-    const response = await fetch('http://localhost:10000/new-user', postOptions);
+    const response = await fetch('https://backend-chat-gov0.onrender.com/new-user', postOptions);
 
     const result = await response.json();
 
