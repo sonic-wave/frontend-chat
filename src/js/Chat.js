@@ -67,14 +67,11 @@ export default class Chat {
     })
 
     ws.addEventListener('open', (e) => {
-      console.log(e);
       console.log('ws open');
 
     })
 
     ws.addEventListener('close', (e) => {
-      console.log(e);
-
       console.log('ws close')
     })
 
@@ -89,16 +86,11 @@ export default class Chat {
     });
 
     ws.addEventListener('error', (e) => {
-      console.log(e);
       console.log('ws error')
     })
 
     ws.addEventListener('message', (e) => {
-      console.log(e);
-
       const data = JSON.parse(e.data);
-
-      console.log(data);
 
       if (data.type !== 'send') {
         chatUserList.innerHTML = '';
